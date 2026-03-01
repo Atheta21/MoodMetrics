@@ -72,22 +72,24 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// 🔹 Submit Assessment
+
+
+
+// Submit Assessment
 app.post("/submit-assessment", async (req, res) => {
-  const { userEmail, answers, totalScore, level } = req.body;
+  try {
+    console.log("Incoming assessment payload:", req.body);
 
-  const newResponse = new Response({
-    userEmail,
-    answers,
-    totalScore,
-    level
-  });
+    // Save directly without strict validation
+    const newResponse = new Response(req.body);
+    await newResponse.save();
 
-  await newResponse.save();
-
-  res.json({ message: "Assessment saved successfully" });
+    res.json({ message: "Assessment saved successfully" });
+  } catch (err) {
+    console.log("Error saving assessment:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
-
 // 🔹 Contact
 app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
