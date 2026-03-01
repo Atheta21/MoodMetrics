@@ -1,0 +1,254 @@
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background: #222;
+  color: white;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+}
+
+.nav-links a:hover {
+  color: #f35b5b;
+}
+
+/* HOME COVER */
+.home {
+  height: 90vh;
+  background: url("https://videocdn.cdnpk.net/videos/181ae751-b480-59d4-8578-2de045abd16a/horizontal/thumbnails/large.jpg?semt=ais_hybrid&item_id=6575230&w=740&q=80")
+    center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 60px;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+}
+
+/* ===== QUESTIONS PAGE ===== */
+
+
+.questions-page {
+  position: relative;
+  min-height: 100vh;
+  max-width: 900px;
+  margin: auto;
+  padding: 40px 20px;
+  overflow: hidden;
+}
+.questions-page h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.question-card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+}
+.options {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.option {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.selected {
+  background: linear-gradient(135deg, #ff7e5f, #ff3cac);
+  color: white;
+  border: none;
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: #ff3cac;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-btn:hover {
+  background: #ff7e5f;
+}
+
+.result-box {
+  margin-top: 25px;
+  padding: 20px;
+  text-align: center;
+  background: #222;
+  color: white;
+  border-radius: 12px;
+}
+
+/* FORM STYLING */
+
+.form-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.form-container input,
+.form-container textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.form-container textarea {
+  height: 100px;
+  resize: none;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 10px;
+  background: #2575fc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.form-container button:hover {
+  background: #1a5ed9;
+}
+
+.response {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Navbar Layout */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;  /* THIS centers everything vertically */
+  padding: 10px 30px;
+  background: #222;
+  color: white;
+}
+
+/* Logo Section */
+.logo-section {
+  display: flex;
+  align-items: center;  /* Centers text with logo */
+  gap: 2px;
+}
+
+/* Logo Image */
+.logo-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Logo Text */
+.logo-text {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1;   /* Prevents extra vertical spacing */
+}
+
+/* ===== ABOUT PAGE FULL SCREEN ===== */
+
+.about-page {
+  position: relative;
+  height: calc(100vh - 70px);   /* Adjust if navbar height differs */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  
+}
+
+/* Blurred Background */
+.about-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://videocdn.cdnpk.net/videos/181ae751-b480-59d4-8578-2de045abd16a/horizontal/thumbnails/large.jpg?semt=ais_hybrid&item_id=6575230&w=740&q=80")
+    center/cover no-repeat;
+  filter: blur(1px);
+  transform: scale(1.1);
+  z-index: -2;
+}
+
+/* Dark overlay */
+.about-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: -1;
+}
+
+/* Center Black Box */
+.about-card {
+  background: rgba(0, 0, 0, 0.75);  /* Black like home */
+  color: white;
+  width: 100%;
+  max-width: 700px;
+  padding: 50px;
+  border-radius: 15px;
+  text-align: center;
+  backdrop-filter: blur(5px);
+}
+
+.about-card h1 {
+  margin-bottom: 50px;
+  font-size: 32px;
+}
+
+.about-card p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
