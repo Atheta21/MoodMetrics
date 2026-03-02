@@ -33,27 +33,51 @@ function Login() {
   };
 
   return (
-    <div className="form-container">
-      <h2>Login 👤</h2>
+    // <div className="form-container">
+    //   <h2>Login 👤</h2>
 
-      <input
-        type="email"
-        placeholder="Enter Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+    //   <input
+    //     type="email"
+    //     placeholder="Enter Email"
+    //     value={email}
+    //     onChange={(e) => setEmail(e.target.value)}
+    //   />
 
-      <input
-        type="password"
-        placeholder="Enter Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+    //   <input
+    //     type="password"
+    //     placeholder="Enter Password"
+    //     value={password}
+    //     onChange={(e) => setPassword(e.target.value)}
+    //   />
 
-      <button onClick={handleLogin}>Login</button>
+    //   <button onClick={handleLogin}>Login</button>
 
-      {response && <p className="response">{response}</p>}
-    </div>
+    //   {response && <p className="response">{response}</p>}
+    // </div>
+
+    <div className="login-page">
+  <div className="login-form-container">
+    <h2>Login 👤</h2>
+
+    <input
+      type="email"
+      placeholder="Enter Email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+    />
+
+    <input
+      type="password"
+      placeholder="Enter Password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+    />
+
+    <button onClick={handleLogin}>Login</button>
+
+    {response && <p className="response">{response}</p>}
+  </div>
+</div>
   );
 }
 
