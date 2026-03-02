@@ -12,30 +12,46 @@ function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    if (!name || !email || !password) {
-      setResponse("Please fill all fields ⚠️");
-      return;
+  if (!name || !email || !password) {
+    setResponse("Please fill all fields ⚠️");
+    return;
+  }
+
+  try {
+    console.log("Sending data:", { name, email, password });
+
+    const res = await axios.post("http://localhost:5000/register", {
+      name,
+      email,
+      password
+    });
+
+    console.log("Success response:", res.data);
+
+    setResponse(res.data.message);
+
+    setTimeout(() => {
+      navigate("/login");
+    }, 2000);
+
+  } catch (err) {
+    console.error("AXIOS ERROR OBJECT:", err);
+
+    if (err.response) {
+      console.log("Backend Response Data:", err.response.data);
+      console.log("Backend Status:", err.response.status);
+      setResponse(err.response.data.message);
+    } 
+    else if (err.request) {
+      console.log("No response received:", err.request);
+      setResponse("No response from server ❌");
+    } 
+    else {
+      console.log("Error setting up request:", err.message);
+      setResponse("Request error ❌");
     }
-
-    try {
-      const res = await axios.post("http://localhost:5000/register", {
-        name,
-        email,
-        password
-      });
-
-      setResponse(res.data.message); // "User registered successfully"
-      
-      // After successful registration, redirect to login after 2 sec
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
-
-    } catch (err) {
-      console.error(err);
-      setResponse("Server error. Try again ❌");
-    }
-  };
+  }
+};
 
   return (
     <div className="login-page">

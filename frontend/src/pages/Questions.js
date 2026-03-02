@@ -64,11 +64,12 @@ function Questions() {
 
   try {
     await axios.post("http://localhost:5000/submit-assessment", {
-  email: localStorage.getItem("userEmail"),
+  email: localStorage.getItem("email"),
   answers,
   totalScore,
   level
 });
+  
     // ✅ Show result AFTER successful save
     setResult({ totalScore, level });
 

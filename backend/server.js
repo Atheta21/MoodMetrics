@@ -8,7 +8,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }));
 // ================== DATABASE CONNECTION ==================
 mongoose.connect("mongodb://127.0.0.1:27017/depressionApp")
 .then(() => console.log("MongoDB Connected"))
@@ -41,7 +41,15 @@ const Contact = mongoose.model("Contact", contactSchema);
 
 
 // ================== ROUTES ==================
+// ================== USER SCHEMA ==================
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+  createdAt: { type: Date, default: Date.now }
+});
 
+const User = mongoose.model("User", userSchema);
 
 // 🔹 Register
 app.post("/register", async (req, res) => {
@@ -130,7 +138,7 @@ app.get("/export-data", async (req, res) => {
     const data = await Response.find();
 
     const fields = [
-      { label: "User Email", value: "userEmail" },
+      { label: "User Email", value: "email" },
       { label: "Response ID", value: "_id" },
       { label: "Total Score", value: "totalScore" },
       { label: "Level", value: "level" },
