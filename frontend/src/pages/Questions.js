@@ -47,40 +47,34 @@ function Questions() {
   
 
   
-  const handleSubmit = async () => {
-  console.log("🔥 Submit button clicked");
-
+ const handleSubmit = async () => {
   if (answers.includes(null)) {
-    alert("Please answer all questions before submitting.");
+    alert("Please answer all questions.");
     return;
   }
 
-  const totalScore = answers.reduce((sum, val) => sum + Number(val), 0);
+  const totalScore = answers.reduce((sum, val) => sum + val, 0);
 
   let level = "";
-  if (totalScore <= 15) level = "Emotionally Balanced 🌼";
-  else if (totalScore <= 30) level = "Mild Mood Changes 🌤";
-  else if (totalScore <= 50) level = "Moderate Emotional Distress 🌥";
-  else if (totalScore <= 65) level = "High Emotional Strain 🌧";
-  else level = "Severe Mood Concerns 🌩";
-
-  // For now, use a dummy email
-  const payload = {
-    userEmail: localStorage.getItem("userEmail") || "test@example.com",
-    answers: answers.map(a => Number(a)),
-    totalScore: Number(totalScore),
-    level: String(level)
-  };
-
-  console.log("Sending payload:", payload);
+  if (totalScore <= 15) level = "Emotionally Balanced ";
+  else if (totalScore <= 30) level = "Mild Mood Changes ";
+  else if (totalScore <= 50) level = "Moderate Emotional Distress ";
+  else if (totalScore <= 65) level = "High Emotional Strain ";
+  else level = "Severe Mood Concerns ";
 
   try {
-    const res = await axios.post("http://localhost:5000/submit-assessment", payload);
-    console.log("Backend response:", res.data);
-    alert("Assessment submitted successfully!");
-  } catch (err) {
-    console.log("Error:", err.response?.data);
-    alert(err.response?.data?.message || "Something went wrong");
+    await axios.post("http://localhost:5000/submit-assessment", {
+  email: localStorage.getItem("userEmail"),
+  answers,
+  totalScore,
+  level
+});
+    // ✅ Show result AFTER successful save
+    setResult({ totalScore, level });
+
+  } catch (error) {
+    console.error(error);
+    alert("Error saving data");
   }
 };
 
