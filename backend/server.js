@@ -49,14 +49,32 @@ const Contact = mongoose.model("Contact", contactSchema);
 
 // ================== ROUTES ==================
 
+
 // 🔹 Register
 app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-  const newUser = new User({ name, email, password });
-  await newUser.save();
+    // Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-  res.json({ message: "User registered successfully" });
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    // Create new user
+    const newUser = new User({ name, email, password });
+    await newUser.save();
+
+    res.json({ message: "User registered successfully" });
+  } catch (err) {
+    console.error("Error in /register:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 // 🔹 Login
