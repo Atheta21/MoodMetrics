@@ -8,6 +8,7 @@ import Questions from "./pages/Questions";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 
+
 import "./App.css";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/questions" element={<Questions />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
+       
       </Routes>
     </Router>
   );

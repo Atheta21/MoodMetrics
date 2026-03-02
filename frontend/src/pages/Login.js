@@ -1,81 +1,55 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [response, setResponse] = useState("");
+  const [form, setForm] = useState({ email: "", password: "" });
 
-  const navigate = useNavigate(); // for redirect
-
-  const handleLogin = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/login", {
-        email,
-        password
-      });
-
-      if (res.data.success) {
-        // ✅ Store email in localStorage
-        localStorage.setItem("userEmail", email);
-
-        setResponse("Login successful 🎉");
-
-        // 🔥 Redirect to Questions page
-        navigate("/questions");
-      } else {
-        setResponse("Invalid credentials ❌");
-      }
-    } catch (error) {
-      setResponse("Server error. Try again.");
+      const res = await axios.post("http://localhost:5000/api/auth/login", form);
+      localStorage.setItem("token", res.data.token);
+      alert("Login successful");
+    } catch (err) {
+      alert("Invalid credentials");
     }
   };
 
   return (
-    // <div className="form-container">
-    //   <h2>Login 👤</h2>
-
-    //   <input
-    //     type="email"
-    //     placeholder="Enter Email"
-    //     value={email}
-    //     onChange={(e) => setEmail(e.target.value)}
-    //   />
-
-    //   <input
-    //     type="password"
-    //     placeholder="Enter Password"
-    //     value={password}
-    //     onChange={(e) => setPassword(e.target.value)}
-    //   />
-
-    //   <button onClick={handleLogin}>Login</button>
-
-    //   {response && <p className="response">{response}</p>}
-    // </div>
-
-    <div className="login-page">
+   <div className="login-page">
   <div className="login-form-container">
-    <h2>Login 👤</h2>
+    <h2>Login</h2>
 
-    <input
-      type="email"
-      placeholder="Enter Email"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-    />
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        placeholder="Email"
+        onChange={(e) =>
+          setForm({ ...form, email: e.target.value })
+        }
+        required
+      />
 
-    <input
-      type="password"
-      placeholder="Enter Password"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-    />
+      <input
+        type="password"
+        placeholder="Password"
+        onChange={(e) =>
+          setForm({ ...form, password: e.target.value })
+        }
+        required
+      />
 
-    <button onClick={handleLogin}>Login</button>
+      <button type="submit">Login</button>
+    </form>
 
-    {response && <p className="response">{response}</p>}
+    {/* 👇 Add this below form */}
+    <p style={{ marginTop: "20px" }}>
+      New user?{" "}
+      <Link to="/register" style={{ color: "#ff7e5f", fontWeight: "bold" }}>
+        Register here
+      </Link>
+    </p>
   </div>
 </div>
   );

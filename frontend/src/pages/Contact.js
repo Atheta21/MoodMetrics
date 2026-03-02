@@ -68,7 +68,7 @@ function Contact() {
   return (
     <div className="contact-page-body">
       <div className="form-container">
-        <h2>Contact Us 📩</h2>
+        <h2>Contact Us </h2>
 
         <input
           type="text"

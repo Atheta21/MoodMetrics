@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const { Parser } = require("json2csv");
 
+
 const app = express();
 
 app.use(cors());
@@ -14,25 +15,17 @@ mongoose.connect("mongodb://127.0.0.1:27017/depressionApp")
 .catch(err => console.log(err));
 
 
-// ================== USER SCHEMA ==================
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String
-});
-
-const User = mongoose.model("User", userSchema);
 
 
 // ================== RESPONSE SCHEMA ==================
 const responseSchema = new mongoose.Schema({
-  userEmail: String,
+  name: String,
+  email: String,
   answers: [Number],
   totalScore: Number,
   level: String,
   createdAt: { type: Date, default: Date.now }
 });
-
 const Response = mongoose.model("Response", responseSchema);
 
 
@@ -49,15 +42,7 @@ const Contact = mongoose.model("Contact", contactSchema);
 
 // ================== ROUTES ==================
 
-// 🔹 Register
-app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
 
-  const newUser = new User({ name, email, password });
-  await newUser.save();
-
-  res.json({ message: "User registered successfully" });
-});
 
 // 🔹 Login
 app.post("/login", async (req, res) => {
@@ -75,20 +60,23 @@ app.post("/login", async (req, res) => {
 
 
 
-// Submit Assessment
 app.post("/submit-assessment", async (req, res) => {
-  try {
-    console.log("Incoming assessment payload:", req.body);
+  const { email, answers, totalScore, level } = req.body;
 
-    // Save directly without strict validation
-    const newResponse = new Response(req.body);
-    await newResponse.save();
+  // find user name using email
+  const user = await User.findOne({ email });
 
-    res.json({ message: "Assessment saved successfully" });
-  } catch (err) {
-    console.log("Error saving assessment:", err);
-    res.status(500).json({ message: "Server error" });
-  }
+  const newResponse = new Response({
+    name: user ? user.name : "Unknown",
+    email,
+    answers,
+    totalScore,
+    level
+  });
+
+  await newResponse.save();
+
+  res.json({ message: "Assessment saved successfully" });
 });
 // 🔹 Contact
 app.post("/contact", async (req, res) => {
@@ -101,15 +89,42 @@ app.post("/contact", async (req, res) => {
 });
 
 // 🔹 Export Dataset as CSV
+
+
 app.get("/export-data", async (req, res) => {
-  const data = await Response.find();
+  try {
+    const data = await Response.find().lean();  // 🔥 VERY IMPORTANT (lean removes mongoose metadata)
 
-  const parser = new Parser();
-  const csv = parser.parse(data);
+    const formattedData = data.map(item => {
+      let row = {
+        Name: item.name || "Unknown",
+        Email: item.email || item.userEmail || "Not Provided",
+        TotalScore: item.totalScore || item.score,
+        Level: item.level,
+        Date: item.createdAt
+      };
 
-  res.header("Content-Type", "text/csv");
-  res.attachment("dataset.csv");
-  res.send(csv);
+      // Add each question as separate column
+      if (item.answers && item.answers.length > 0) {
+        item.answers.forEach((ans, index) => {
+          row[`Q${index + 1}`] = ans;
+        });
+      }
+
+      return row;
+    });
+
+    const parser = new Parser();
+    const csv = parser.parse(formattedData);
+
+    res.header("Content-Type", "text/csv");
+    res.attachment("depression_dataset.csv");
+    res.send(csv);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error exporting data" });
+  }
 });
 
 
