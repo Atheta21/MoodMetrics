@@ -42,50 +42,61 @@ function Questions() {
     setAnswers(updated);
   };
 
+  
+
+  
+
+  
   const handleSubmit = async () => {
-    if (answers.includes(null)) {
-      alert("Please answer all questions before submitting.");
-      return;
-    }
+  console.log("🔥 Submit button clicked");
 
-    const totalScore = answers.reduce((sum, val) => sum + val, 0);
+  if (answers.includes(null)) {
+    alert("Please answer all questions before submitting.");
+    return;
+  }
 
-    let level = "";
-    if (totalScore <= 15) level = "Emotionally Balanced 🌼";
-    else if (totalScore <= 30) level = "Mild Mood Changes 🌤";
-    else if (totalScore <= 50) level = "Moderate Emotional Distress 🌥";
-    else if (totalScore <= 65) level = "High Emotional Strain 🌧";
-    else level = "Severe Mood Concerns 🌩";
+  const totalScore = answers.reduce((sum, val) => sum + Number(val), 0);
 
-    // 🔥 Save to backend
-    await axios.post("http://localhost:5000/submit-assessment", {
-      userEmail: localStorage.getItem("userEmail"),
-      answers,
-      totalScore,
-      level
-    });
+  let level = "";
+  if (totalScore <= 15) level = "Emotionally Balanced 🌼";
+  else if (totalScore <= 30) level = "Mild Mood Changes 🌤";
+  else if (totalScore <= 50) level = "Moderate Emotional Distress 🌥";
+  else if (totalScore <= 65) level = "High Emotional Strain 🌧";
+  else level = "Severe Mood Concerns 🌩";
 
-    setResult({ totalScore, level });
+  // For now, use a dummy email
+  const payload = {
+    userEmail: localStorage.getItem("userEmail") || "test@example.com",
+    answers: answers.map(a => Number(a)),
+    totalScore: Number(totalScore),
+    level: String(level)
   };
+
+  console.log("Sending payload:", payload);
+
+  try {
+    const res = await axios.post("http://localhost:5000/submit-assessment", payload);
+    console.log("Backend response:", res.data);
+    alert("Assessment submitted successfully!");
+  } catch (err) {
+    console.log("Error:", err.response?.data);
+    alert(err.response?.data?.message || "Something went wrong");
+  }
+};
 
   return (
     <div className="questions-page">
       <h2>Mood Assessment</h2>
 
-      {questions.map((question, qIndex) => (
-        <div key={qIndex} className="question-card">
-          <p>{qIndex + 1}. {question}</p>
-
+      {questions.map((q, i) => (
+        <div key={i} className="question-card">
+          <p>{i + 1}. {q}</p>
           <div className="options">
-            {options.map((opt, i) => (
+            {options.map((opt, j) => (
               <button
-                key={i}
-                className={
-                  answers[qIndex] === opt.value
-                    ? "option selected"
-                    : "option"
-                }
-                onClick={() => handleSelect(qIndex, opt.value)}
+                key={j}
+                className={answers[i] === opt.value ? "option selected" : "option"}
+                onClick={() => handleSelect(i, opt.value)}
               >
                 {opt.text}
               </button>
@@ -94,7 +105,12 @@ function Questions() {
         </div>
       ))}
 
-      <button className="submit-btn" onClick={handleSubmit}>
+      <button
+        type="button" // important to prevent reload
+        className="submit-btn"
+        onClick={handleSubmit}
+        disabled={answers.includes(null)} // disable until all answered
+      >
         Submit Assessment
       </button>
 
