@@ -43,6 +43,32 @@ const Contact = mongoose.model("Contact", contactSchema);
 // ================== ROUTES ==================
 
 
+// 🔹 Register
+app.post("/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    // Create new user
+    const newUser = new User({ name, email, password });
+    await newUser.save();
+
+    res.json({ message: "User registered successfully" });
+  } catch (err) {
+    console.error("Error in /register:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 // 🔹 Login
 app.post("/login", async (req, res) => {
@@ -89,43 +115,43 @@ app.post("/contact", async (req, res) => {
 });
 
 // 🔹 Export Dataset as CSV
+// app.get("/export-data", async (req, res) => {
+//   const data = await Response.find();
 
+//   const parser = new Parser();
+//   const csv = parser.parse(data);
 
+//   res.header("Content-Type", "text/csv");
+//   res.attachment("dataset.csv");
+//   res.send(csv);
+// });
 app.get("/export-data", async (req, res) => {
   try {
-    const data = await Response.find().lean();  // 🔥 VERY IMPORTANT (lean removes mongoose metadata)
+    const data = await Response.find();
 
-    const formattedData = data.map(item => {
-      let row = {
-        Name: item.name || "Unknown",
-        Email: item.email || item.userEmail || "Not Provided",
-        TotalScore: item.totalScore || item.score,
-        Level: item.level,
-        Date: item.createdAt
-      };
+    const fields = [
+      { label: "User Email", value: "userEmail" },
+      { label: "Response ID", value: "_id" },
+      { label: "Total Score", value: "totalScore" },
+      { label: "Level", value: "level" },
+      { label: "Created At", value: row => new Date(row.createdAt).toLocaleString() },
+      ...Array.from({ length: 20 }, (_, i) => ({
+        label: `Q${i+1}`, value: row => row.answers[i] || ""
+      }))
+    ];
 
-      // Add each question as separate column
-      if (item.answers && item.answers.length > 0) {
-        item.answers.forEach((ans, index) => {
-          row[`Q${index + 1}`] = ans;
-        });
-      }
-
-      return row;
-    });
-
-    const parser = new Parser();
-    const csv = parser.parse(formattedData);
+    const parser = new Parser({ fields });
+    const csv = parser.parse(data);
 
     res.header("Content-Type", "text/csv");
-    res.attachment("depression_dataset.csv");
+    res.attachment("dataset.csv");
     res.send(csv);
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Error exporting data" });
+  } catch (err) {
+    console.error("Error exporting data:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
+
 
 
 // ================== SERVER ==================
